@@ -1,0 +1,5 @@
+export function calculateElo(Ra,Rb,score, k=32){
+  const Ea = 1/(1+Math.pow(10, (Rb - Ra)/400));
+  const newRa = Ra + k*(score - Ea);
+  return Math.round(newRa);
+}
