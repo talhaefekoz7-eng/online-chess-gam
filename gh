@@ -1,0 +1,40 @@
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const { Chess } = require("chess.js");
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+let games = {};
+
+app.use(express.static("public"));
+
+io.on("connection", socket => {
+
+  socket.on("joinRoom", room => {
+    socket.join(room);
+    if (!games[room]) games[room] = new Chess();
+    io.to(socket.id).emit("boardUpdate", games[room].fen());
+  });
+
+  socket.on("move", ({ room, from, to }) => {
+    const game = games[room];
+    if (!game) return;
+    const move = game.move({ from, to, promotion: "q" });
+    if (move) {
+      io.to(room).emit("boardUpdate", game.fen());
+    }
+  });
+
+  socket.on("reset", room => {
+    games[room] = new Chess();
+    io.to(room).emit("boardUpdate", games[room].fen());
+  });
+
+});
+
+server.listen(3000, () => {
+  console.log("⚡ Chess server running at http://localhost:3000");
+});
