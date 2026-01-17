@@ -1,0 +1,5 @@
+async function aiMove(fen){
+  const move = await getBestMove(fen,12);
+  return move;
+}
+// örnek: "e2e4"
