@@ -1,0 +1,13 @@
+import { Chess } from "chess.js";
+
+export function exportPGN(moves){
+  const game = new Chess();
+  moves.forEach(m=>game.move(m));
+  return game.pgn();
+}
+
+export function loadFromPGN(pgn){
+  const game = new Chess();
+  game.load_pgn(pgn);
+  return game.fen();
+}
