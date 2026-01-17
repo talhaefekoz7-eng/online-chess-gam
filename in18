@@ -1,0 +1,8 @@
+export const translations = {
+  tr: { join:"Katıl", reset:"Yeniden Başlat", chat:"Sohbet" },
+  en: { join:"Join", reset:"Reset", chat:"Chat" }
+};
+
+export function t(lang, key){
+  return translations[lang]?.[key] ?? key;
+}
