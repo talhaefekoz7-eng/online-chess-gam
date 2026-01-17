@@ -1,0 +1,34 @@
+import http from "http";
+import express from "express";
+import { Server } from "socket.io";
+import { Chess } from "chess.js";
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+let games = {};
+
+io.on("connection", socket => {
+  socket.on("joinRoom", room => {
+    socket.join(room);
+    if (!games[room]) games[room] = new Chess();
+    io.to(socket.id).emit("boardState", games[room].fen());
+  });
+
+  socket.on("move", ({ room, from, to }) => {
+    const game = games[room];
+    if(!game) return;
+    const move = game.move({ from, to, promotion:"q" });
+    if(move){
+      io.to(room).emit("boardState", game.fen());
+    }
+  });
+
+  socket.on("resetGame", room => {
+    games[room] = new Chess();
+    io.to(room).emit("boardState", games[room].fen());
+  });
+});
+
+server.listen(3000);
