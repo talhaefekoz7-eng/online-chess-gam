@@ -1,0 +1,14 @@
+export const themes = {
+  classic:{
+    r:"♜",n:"♞",b:"♝",q:"♛",k:"♚",p:"♟",
+    R:"♖",N:"♘",B:"♗",Q:"♕",K:"♔",P:"♙"
+  },
+  neon:{
+    r:"🟥",n:"🟧",b:"🟨",q:"🔷",k:"⭐",p:"⬤",
+    R:"🟥",N:"🟧",B:"🟨",Q:"🔷",K:"⭐",P:"⬤"
+  }
+};
+
+export function getPieceIcon(theme,piece){
+  return themes[theme]?.[piece] || piece;
+}
