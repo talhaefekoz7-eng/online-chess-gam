@@ -1,0 +1,8 @@
+const pc = new RTCPeerConnection();
+export async function startVoice(localStream,remoteAudio){
+  localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+  pc.ontrack = e=>{ remoteAudio.srcObject = e.streams[0]; };
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  return offer;
+}
