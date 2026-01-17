@@ -1,0 +1,16 @@
+import { Chess } from "chess.js";
+
+export class GameLogic {
+  constructor(){ this.chess = new Chess(); }
+
+  move(from,to){
+    const result = this.chess.move({from,to,promotion:"q"});
+    return { ok: !!result, status: this.chess.game_over() };
+  }
+
+  getMoves(square){ return this.chess.moves({square}); }
+  getFen(){ return this.chess.fen(); }
+  getPGN(){ return this.chess.pgn(); }
+  isCheck(){ return this.chess.in_check(); }
+  isMate(){ return this.chess.in_checkmate(); }
+}
