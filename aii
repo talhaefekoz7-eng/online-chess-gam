@@ -1,0 +1,15 @@
+const engine = new Worker("stockfish.wasm.js");
+engine.postMessage("uci");
+
+function getBestMove(fen, depth=15){
+  return new Promise(res=>{
+    engine.onmessage = e=>{
+      if(e.data.includes("bestmove")){
+        const parts = e.data.split(" ");
+        res(parts[1]);
+      }
+    };
+    engine.postMessage("position fen " + fen);
+    engine.postMessage("go depth " + depth);
+  });
+}
