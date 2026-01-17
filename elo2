@@ -1,0 +1,2 @@
+const whiteElo = calculateElo(1500,1600,1); // kazanan
+const blackElo = calculateElo(1600,1500,0); // kaybeden
