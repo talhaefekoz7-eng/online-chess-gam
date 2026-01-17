@@ -1,0 +1,2 @@
+git remote set-url origin https://github.com/talhaefekoz7-eng/chessmate-online.git
+git push -u origin main
