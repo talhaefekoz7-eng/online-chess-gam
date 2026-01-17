@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Global Chess</title>
+<style>
+body{margin:0;display:flex;flex-direction:column;align-items:center;background:#121212;color:#fff;font-family:Arial;}
+#controls{margin:10px;}
+#board{display:grid;grid-template:repeat(8,60px)/repeat(8,60px);margin-top:10px;}
+.square{width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;}
+.white{background:#f0d9b5} .black{background:#b58863}
+</style>
+</head>
+<body>
+
+<div id="controls">
+  <input id="roomCode" placeholder="Oda Kodu"><button onclick="joinRoom()">Katıl</button>
+  <button onclick="resetGame()">Reset</button>
+</div>
+
+<div id="board"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const icons={r:"♜",n:"♞",b:"♝",q:"♛",k:"♚",p:"♟",R:"♖",N:"♘",B:"♗",Q:"♕",K:"♔",P:"♙"};
+let currentFen=""; let selected=null;
+
+function drawBoard(){
+  const boardEl=document.getElementById("board");
+  boardEl.innerHTML="";
+  currentFen.split(" ")[0].split("/").forEach((row,r)=>{
+    let file=0;
+    for(let ch of row){
+      if(!isNaN(ch)){
+        for(let i=0;i<+ch;i++){
+          addSquare(boardEl,r,file,""); file++;
+        }
+      } else {
+        addSquare(boardEl,r,file,icons[ch]); file++;
+      }
+    }
+  });
+}
+
+function addSquare(parent,r,c,val){
+  const sq=document.createElement("div");
+  sq.className="square "+((r+c)%2?"black":"white");
+  sq.textContent=val;
+  sq.onclick=()=>selectSquare(r,c);
+  parent.appendChild(sq);
+}
+
+function selectSquare(r,c){
+  if(!selected){ selected=[r,c]; return; }
+  const from=String.fromCharCode(97+selected[1])+(8-selected[0]);
+  const to=String.fromCharCode(97+c)+(8-r);
+  socket.emit("move", { room:document.getElementById("roomCode").value, from, to });
+  selected=null;
+}
+
+socket.on("boardUpdate", fen=>{currentFen=fen; drawBoard();});
+
+function joinRoom(){
+  socket.emit("joinRoom", document.getElementById("roomCode").value);
+}
+
+function resetGame(){
+  socket.emit("reset", document.getElementById("roomCode").value);
+}
+
+</script>
+</body></html>
