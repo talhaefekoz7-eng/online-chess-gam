@@ -1,0 +1,3 @@
+git clone https://github.com/Vallabh-1504/multiplayer-chess.git
+npm install
+node server.js
